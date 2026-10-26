@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bot Store</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">
+            BOT<span>LAB</span>
+        </div>
+
+        <a
+            class="telegram-top"
+            href="https://t.me/YOUR_BOT_USERNAME?start=site"
+            target="_blank"
+        >
+            Purchase on Telegram →
+        </a>
+    </header>
+
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <p class="eyebrow">AUTOMATION TOOLS</p>
+
+        <h1>
+            Bots built to<br>
+            <span>do the work.</span>
+        </h1>
+
+        <p class="hero-text">
+            Explore our collection of automation bots.
+            Choose a bot and contact us through Telegram.
+        </p>
+
+        <a
+            class="telegram-button"
+            href="https://t.me/YOUR_BOT_USERNAME?start=site"
+            target="_blank"
+        >
+            Interested in a bot? →
+        </a>
+
+    </section>
+
+
+    <!-- BOTS -->
+    <main>
+
+        <div class="section-heading">
+            <p>AVAILABLE BOTS</p>
+            <h2>Choose your tool.</h2>
+        </div>
+
+        <!-- Google Sheet data will appear here -->
+        <section id="bots" class="bots-grid">
+
+            <div class="loading">
+                Loading bots...
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 BOTLAB</p>
+    </footer>
+
+
+    <!-- PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <script>
+
+        /*
+         * GOOGLE SHEET CSV URL
+         *
+         * We will put the real URL here later.
+         */
+
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTeOjjz7_8ld_EfDdkVo0ijsql1T-dpZDNYS9xLwh91NZY6_2Tlpg8Qp6YbQxJMLVbPbTkzSP56TjuS/pub?output=csv";
+
+
+        /*
+         * YOUR TELEGRAM BOT USERNAME
+         *
+         * Example:
+         *
+         * const BOT_USERNAME = "my_bot";
+         */
+
+        const BOT_USERNAME = "YOUR_BOT_USERNAME";
+
+
+        /*
+         * GET BOT DATA FROM GOOGLE SHEET
+         */
+
+        Papa.parse(SHEET_URL, {
+
+            download: true,
+
+            header: true,
+
+            skipEmptyLines: true,
+
+            complete: function(results) {
+
+                const botsContainer =
+                    document.getElementById("bots");
+
+                botsContainer.innerHTML = "";
+
+
+                /*
+                 * Only show bots whose status is "live"
+                 */
+
+                const liveBots = results.data.filter(function(bot) {
+
+                    return (
+                        (bot.status || "")
+                        .trim()
+                        .toLowerCase()
+                        === "live"
+                    );
+
+                });
+
+
+                /*
+                 * Create a card for every bot
+                 */
+
+                liveBots.forEach(function(bot) {
+
+                    const card =
+                        document.createElement("article");
+
+                    card.className = "bot-card";
+
+
+                    /*
+                     * IMAGE
+                     */
+
+                    if (bot.image) {
+
+                        const image =
+                            document.createElement("img");
+
+                        image.src = bot.image;
+
+                        image.alt = bot.name;
+
+                        image.loading = "lazy";
+
+                        card.appendChild(image);
+
+                    }
+
+
+                    /*
+                     * BOT NAME
+                     */
+
+                    const name =
+                        document.createElement("h3");
+
+                    name.textContent = bot.name;
+
+
+                    /*
+                     * DESCRIPTION
+                     */
+
+                    const description =
+                        document.createElement("p");
+
+                    description.textContent =
+                        bot.description;
+
+
+                    /*
+                     * PRICE
+                     */
+
+                    const price =
+                        document.createElement("strong");
+
+                    price.textContent =
+                        bot.price;
+
+
+                    /*
+                     * TELEGRAM BUTTON
+                     */
+
+                    const button =
+                        document.createElement("a");
+
+                    button.className =
+                        "bot-button";
+
+                    button.href =
+                        `https://t.me/${BOT_USERNAME}?start=site`;
+
+                    button.target = "_blank";
+
+                    button.rel =
+                        "noopener noreferrer";
+
+                    button.textContent =
+                        "Interested →";
+
+
+                    /*
+                     * Put everything inside card
+                     */
+
+                    card.appendChild(name);
+
+                    card.appendChild(description);
+
+                    card.appendChild(price);
+
+                    card.appendChild(button);
+
+
+                    /*
+                     * Add card to website
+                     */
+
+                    botsContainer.appendChild(card);
+
+                });
+
+
+                /*
+                 * If no bots exist
+                 */
+
+                if (liveBots.length === 0) {
+
+                    botsContainer.innerHTML =
+                        "<p>No bots available right now.</p>";
+
+                }
+
+            },
+
+            error: function(error) {
+
+                console.error(error);
+
+                document.getElementById("bots").innerHTML =
+                    "<p>Unable to load bots.</p>";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>
+```
